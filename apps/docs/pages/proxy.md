@@ -1,8 +1,8 @@
-## Peppermint behind a reverse proxy
+## DevPulse behind a reverse proxy
 
 Sometimes, individuals & organisations like to put applications behind a reverse proxy, the main reason for this is to allow applications to be accessed on specific domains.
 
-An example of this would be a helpdesk company running peppermint having it accessible to employee's through their domain name.
+An example of this would be a helpdesk company running peppermiDevPulsent having it accessible to employee's through their domain name.
 
 ```
 https://support.example.com
@@ -107,7 +107,7 @@ http://your_server_ip
 
 And if everything is good you should see the welcome to nginx sign.
 
-## Setting up peppermint
+## Setting up DevPulse
 
 Now nginx is out the way and configured, we can now simply download the docker compose file from github:
 
@@ -167,7 +167,7 @@ After you enter the correct base url hit `ctrl + x` and then `y` to save. When t
 docker-compose up -d
 ```
 
-This will pull the peppermint image & postgres and start the process of both containers. Once up, we have one finally more nginx config to take care of.
+This will pull the DevPulse image & postgres and start the process of both containers. Once up, we have one finally more nginx config to take care of.
 
 ### Nginx config
 
@@ -209,7 +209,7 @@ server {
 Replace the server name with your url of choice, including subdomain and procced to save the file as
 
 ```
-peppermint-client.conf
+DevPulse-client.conf
 ```
 
 ### API Proxy Config
@@ -238,7 +238,7 @@ server {
 Replace the server name with your url of choice, including subdomain and procced to save the file as, make sure this matches what you put in the docker-compose.yml file
 
 ```
-peppermint-api.conf
+DevPulse-api.conf
 ```
 
 ### Restarting nginx
@@ -251,7 +251,7 @@ This can be achieved by running:
 systemctl restart nginx
 ```
 
-You should now be able to see peppermint running on your choosen subdomain.
+You should now be able to see DevPulse running on your choosen subdomain.
 
 I hope you found this guide usual :)
 

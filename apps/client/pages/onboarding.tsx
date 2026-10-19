@@ -31,7 +31,7 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <div className="flex flex-col">
               <h1 className="text-2xl text-foreground font-bold">
-                Peppermint{" "}
+                DevPulse{" "}
               </h1>
               <p className="text-foreground">
                 Welcome to DevPulse! A fully open sourced ticket management
@@ -64,7 +64,7 @@ export default function Home() {
                 <div className="flex flex-col align-center lg:w-[36em]">
                   <span className="font-bold text-lg">Docs</span>
                   <span className="max-w-lg text-xs md:text-md">
-                    Documentation for Peppermint can be found here. If you find
+                    Documentation for DevPulse can be found here. If you find
                     something that isnt documented, feel free to open a PR or an
                     Issue. We'll get straight on it.
                   </span>

@@ -32,7 +32,7 @@ const config = {
     key: 'release',
     text: (
       <a href="https://github.com/Peppermint-Lab/peppermint/releases" target="_blank">
-        🎉 Peppermint 0.4.5 is here! Check it out now! 🚀
+        🎉 DevPulse 0.4.5 is here! Check it out now! 🚀
       </a>
     )
   },

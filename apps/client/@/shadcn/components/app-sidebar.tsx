@@ -171,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <img src="/favicon/favicon-32x32.png" className="size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold text-xl">Peppermint</span>
+            <span className="truncate font-semibold text-xl">DevPulse</span>
             <span className="truncate text-xs">
               version: {process.env.NEXT_PUBLIC_CLIENT_VERSION}
             </span>

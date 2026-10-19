@@ -5,7 +5,7 @@ import Fathom from "@/component/Fathom";
 export const metadata: Metadata = {
   title: "Peppermint",
   description:
-    "Peppermint is a self-hosted issue tracker for your projects or help desk.",
+    "DevPulse is a self-hosted issue tracker for your projects or help desk.",
 };
 
 export default function RootLayout({

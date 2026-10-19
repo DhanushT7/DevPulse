@@ -172,7 +172,7 @@ export default function PortalLayout({ children }: any) {
                       {/* <img className="h-8 w-auto" src="/logo.svg" alt="Workflow" /> */}
                       <Link href="https://peppermint.sh">
                         <span className="text-3xl ml-2  hover:text-green-600 font-bold ">
-                          Peppermint
+                          DevPulse
                         </span>
                       </Link>
                     </div>
@@ -238,7 +238,7 @@ export default function PortalLayout({ children }: any) {
               {/* <img className="h-8 w-auto" src="/logo.svg" alt="Workflow" /> */}
               <Link href="https://peppermint.sh">
                 <span className="text-3xl ml-2  hover:text-green-600 font-bold ">
-                  Peppermint
+                  DevPulse
                 </span>
               </Link>
             </div>
