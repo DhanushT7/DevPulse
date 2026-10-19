@@ -16,7 +16,7 @@ pipeline {
         choice(
             name: 'BUILD_MODE',
             choices: ['full', 'docker_only', 'ci_only'],
-            description: 'Execution mode: "full" (build code + Docker image), "docker_only" (build Dockerfile directly), or "ci_only" (lint and compile without Docker)'
+            description: 'Execution mode: "full" (build code + Docker image + local deploy), "docker_only" (build Dockerfile directly + local deploy), or "ci_only" (lint and compile without Docker)'
         )
         booleanParam(
             name: 'RUN_LINT',
@@ -29,19 +29,14 @@ pipeline {
             description: 'Build Docker container image'
         )
         booleanParam(
-            name: 'PUSH_DOCKER_IMAGE',
-            defaultValue: false,
-            description: 'Push built image to container registry (requires Docker credentials)'
+            name: 'DEPLOY_LOCAL',
+            defaultValue: true,
+            description: 'Deploy application locally using Docker Compose with the locally built image'
         )
         string(
             name: 'DOCKER_IMAGE_NAME',
             defaultValue: 'peppermint',
-            description: 'Docker image repository name (e.g. your-dockerhub-user/peppermint)'
-        )
-        string(
-            name: 'DOCKER_REGISTRY_CREDENTIALS_ID',
-            defaultValue: 'dockerhub-credentials',
-            description: 'Jenkins Credentials ID for Docker Registry'
+            description: 'Docker image repository name (e.g. peppermint)'
         )
     }
 
@@ -143,38 +138,46 @@ pipeline {
                 }
             }
             steps {
-                echo '=== Stage 7: Building Docker Container Image ==='
+                echo '=== Stage 7: Building Docker Container Image Locally ==='
                 sh '''
                     docker build \
                         -t ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} \
                         -t ${DOCKER_IMAGE_NAME}:latest \
+                        -t peppermint-custom:latest \
                         -f dockerfile .
                 '''
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Deploy Locally') {
             when {
                 allOf {
-                    expression { return params.PUSH_DOCKER_IMAGE == true }
+                    expression { return params.DEPLOY_LOCAL == true }
                     expression { return params.BUILD_MODE in ['full', 'docker_only'] }
                 }
             }
             steps {
-                echo '=== Stage 8: Pushing Docker Image to Registry ==='
-                withCredentials([usernamePassword(
-                    credentialsId: params.DOCKER_REGISTRY_CREDENTIALS_ID,
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker tag ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_USER}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
-                        docker tag ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_USER}/${DOCKER_IMAGE_NAME}:latest
-                        docker push ${DOCKER_USER}/${DOCKER_IMAGE_NAME}:${IMAGE_TAG}
-                        docker push ${DOCKER_USER}/${DOCKER_IMAGE_NAME}:latest
-                    '''
-                }
+                echo '=== Stage 8: Deploying Application Locally with Docker Compose ==='
+                sh '''
+                    # Detect Docker Compose command (plugin vs standalone)
+                    if docker compose version >/dev/null 2>&1; then
+                        COMPOSE_CMD="docker compose"
+                    elif command -v docker-compose >/dev/null 2>&1; then
+                        COMPOSE_CMD="docker-compose"
+                    else
+                        echo "ERROR: Neither 'docker compose' nor 'docker-compose' found in PATH." >&2
+                        exit 1
+                    fi
+
+                    echo "Using compose command: ${COMPOSE_CMD}"
+                    echo "Deploying peppermint locally with image ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}..."
+
+                    DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}" IMAGE_TAG="${IMAGE_TAG}" \
+                        $COMPOSE_CMD -p peppermint -f docker-compose.yml up -d --remove-orphans --force-recreate
+
+                    echo "Deployment completed. Checking running container status:"
+                    $COMPOSE_CMD -p peppermint -f docker-compose.yml ps
+                '''
             }
         }
     }
@@ -185,7 +188,7 @@ pipeline {
             cleanWs()
         }
         success {
-            echo "SUCCESS: Pipeline build #${env.BUILD_NUMBER} completed successfully!"
+            echo "SUCCESS: Pipeline build #${env.BUILD_NUMBER} completed and deployed locally!"
         }
         failure {
             echo "FAILURE: Pipeline build #${env.BUILD_NUMBER} failed. Review the logs above for troubleshooting."

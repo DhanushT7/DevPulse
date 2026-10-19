@@ -14,7 +14,7 @@ services:
 
   peppermint:
     container_name: peppermint
-    image: peppermint-custom:latest
+    image: ${DOCKER_IMAGE_NAME:-peppermint}:${IMAGE_TAG:-latest}
     pull_policy: never
     ports:
       - 1000:3000
