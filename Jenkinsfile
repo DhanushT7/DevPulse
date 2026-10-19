@@ -48,6 +48,7 @@ pipeline {
     environment {
         CI = 'true'
         COREPACK_ENABLE_DOWNLOAD_PROMPT = '0'
+        YARN_ENABLE_IMMUTABLE_INSTALLS = 'false'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         PATH = "${WORKSPACE}/.bin:${env.PATH}"
     }
@@ -88,7 +89,7 @@ pipeline {
                     which yarn || corepack yarn -v
 
                     # Install workspace dependencies using root yarn.lock
-                    yarn install --immutable || corepack yarn install
+                    yarn install || corepack yarn install
                 '''
             }
         }
